@@ -1,0 +1,13 @@
+services:
+  portafolio:
+    build: .
+    container_name: portafolio
+    restart: unless-stopped
+    ports:
+      - "3000:80"        # cambia 3000 por el puerto que quieras exponer
+    networks:
+      - nginx-proxy      # red compartida con tu nginx externo
+
+networks:
+  nginx-proxy:
+    external: true       # red ya creada por tu otro docker
