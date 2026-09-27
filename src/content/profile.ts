@@ -43,9 +43,15 @@ export type ProjectItem = {
   name: string;
   description: string;
   tags: string[];
-  status: "public" | "private";
+  status: "public" | "private" | "live";
   href?: string;
   featured?: boolean;
+  /**
+   * Overrides the default "live" status badge text (e.g. for an internal
+   * tool that should read "Plataforma interna" instead of the default
+   * production-site label).
+   */
+  badgeLabel?: string;
 };
 
 export const profile = {
@@ -216,6 +222,25 @@ export const projects: ProjectItem[] = [
     tags: ["PHP", "MySQL", "Linux"],
     status: "private",
     featured: true,
+  },
+  {
+    name: "Darnel — sitio corporativo",
+    description:
+      "Sitio corporativo de Darnel, empresa de empaques sostenibles. Trabajo en el sitio actual y en la migración del CMS desde cero a WinterCMS (Laravel), próxima a salir a producción: módulos de gestión de contenido, procesamiento de formularios y soporte multilenguaje para audiencias internacionales. Mantenimiento continuo con Laravel (WinterCMS) en PHP.",
+    tags: ["PHP", "Laravel", "WinterCMS", "Multilenguaje"],
+    status: "live",
+    href: "https://www.darnelgroup.com",
+    featured: true,
+  },
+  {
+    name: "Tracker Focus",
+    description:
+      "Plataforma interna para registrar, visualizar y hacer seguimiento a los proyectos operativos de la iniciativa Focus. Responsable del backend y los despliegues: NestJS, PostgreSQL, AWS y sus servicios, con pipeline de CI/CD en Bitbucket mediante hooks.",
+    tags: ["NestJS", "PostgreSQL", "AWS", "Bitbucket Pipelines", "CI/CD", "DevOps"],
+    status: "live",
+    href: "https://focus-ocx.online",
+    featured: true,
+    badgeLabel: "Plataforma interna",
   },
   {
     name: "vcsiigo",

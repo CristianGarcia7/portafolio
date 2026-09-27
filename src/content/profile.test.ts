@@ -55,10 +55,32 @@ describe("profile content invariants", () => {
         expect(project.href).toMatch(
           /^https:\/\/github\.com\/CristianGarcia7\/[\w.-]+$/,
         );
-      } else {
+      } else if (project.status === "private") {
         expect(project.href).toBeUndefined();
       }
     }
+  });
+
+  it("adds the Darnel and Tracker Focus live projects with an https href and never the staging domain", () => {
+    const liveProjects = projects.filter((p) => p.status === "live");
+    expect(liveProjects).toHaveLength(2);
+
+    const darnel = projects.find((p) => p.name === "Darnel — sitio corporativo");
+    expect(darnel?.status).toBe("live");
+    expect(darnel?.href).toBe("https://www.darnelgroup.com");
+
+    const trackerFocus = projects.find((p) => p.name === "Tracker Focus");
+    expect(trackerFocus?.status).toBe("live");
+    expect(trackerFocus?.href).toBe("https://focus-ocx.online");
+
+    for (const project of projects) {
+      if (project.status === "live") {
+        expect(project.href).toMatch(/^https:\/\//);
+      }
+    }
+
+    const serialized = JSON.stringify({ contactLinks, projects });
+    expect(serialized).not.toMatch(/quadi\.io/);
   });
 
   it("lists featured projects before the rest", () => {

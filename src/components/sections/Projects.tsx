@@ -6,8 +6,10 @@ import { cn } from "@/lib/cn";
 /**
  * Grid of `projects`, rendered in data order (featured projects come first
  * in the data and span two columns here, so they read as larger cards).
- * Public projects link out to their exact GitHub `href`; private ones show
- * a "Privado · En producción" badge instead of a link, since there is
+ * Public projects link out to their exact GitHub `href`; live projects link
+ * out to their real site with a "Ver sitio" link and a status badge
+ * (`badgeLabel`, defaulting to "En producción · sitio web"); private ones
+ * show a "Privado · En producción" badge instead of a link, since there is
  * nothing public to send visitors to.
  */
 export function Projects() {
@@ -32,6 +34,10 @@ export function Projects() {
                   </h3>
                   {project.status === "private" ? (
                     <Badge variant="default">Privado · En producción</Badge>
+                  ) : project.status === "live" ? (
+                    <Badge variant="success">
+                      {project.badgeLabel ?? "En producción · sitio web"}
+                    </Badge>
                   ) : null}
                 </div>
 
@@ -57,6 +63,19 @@ export function Projects() {
                   >
                     <ExternalLink className="h-4 w-4" aria-hidden="true" />
                     Ver en GitHub
+                  </a>
+                ) : null}
+
+                {project.status === "live" && project.href ? (
+                  <a
+                    href={project.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Ver sitio de ${project.name}`}
+                    className="mt-auto inline-flex w-fit items-center gap-2 text-sm font-medium text-accent-cyan transition-colors hover:text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-cyan"
+                  >
+                    <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                    Ver sitio
                   </a>
                 ) : null}
               </Card>

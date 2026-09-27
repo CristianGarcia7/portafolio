@@ -48,4 +48,39 @@ describe("Projects", () => {
       }
     }
   });
+
+  it("links each live project to its exact site href via a 'Ver sitio' link, opened safely in a new tab", () => {
+    render(<Projects />);
+
+    const liveProjects = projects.filter((p) => p.status === "live");
+    expect(liveProjects).toHaveLength(2);
+
+    for (const project of liveProjects) {
+      const link = screen.getByRole("link", {
+        name: `Ver sitio de ${project.name}`,
+      });
+      expect(link).toHaveAttribute("href", project.href);
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noopener noreferrer");
+      expect(link).toHaveTextContent("Ver sitio");
+    }
+  });
+
+  it("shows the production/internal badge for live projects and never renders the staging domain", () => {
+    render(<Projects />);
+
+    const liveProjects = projects.filter((p) => p.status === "live");
+    expect(liveProjects).toHaveLength(2);
+
+    for (const project of liveProjects) {
+      const card = screen.getByTestId(`project-card-${project.name}`);
+      expect(
+        within(card).getByText(
+          project.badgeLabel ?? "En producción · sitio web"
+        )
+      ).toBeInTheDocument();
+    }
+
+    expect(document.body.innerHTML).not.toMatch(/quadi\.io/);
+  });
 });
