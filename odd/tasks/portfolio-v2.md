@@ -34,7 +34,7 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 - [x] T4 Navbar + Hero (typing terminal) + About/stats with tests. Route: delegated.
 - [ ] T4a Fix hydration-path bugs from T3a+T4 review: (1) Reveal animation never plays after SSR hydration (initial read only at mount) — WARNING R3-reveal-animation-dead-after-hydration; (2) hydration guard test is case-sensitive and misses React 19 mismatch reporting — WARNING R3-hydration-guard-case-sensitive (use hydrateRoot + onRecoverableError); (3) TerminalCard SSR/client divergence + no-JS empty terminal + untested typing path — WARNING R3-terminal-ssr-divergence-and-typing-untested; plus SUGGESTIONs: IO stub cleanup in afterEach, spotlight cleanup asserts same handler. Tests must exercise the real SSR→hydrate path (renderToString + hydrateRoot). Route: delegated with T5 (separate commit).
 - [ ] T5 Experience timeline + Projects + Skills with tests. Route: delegated.
-- [ ] T6 Education + Contact (copy email) + Footer + page assembly with tests. Route: delegated.
+- [ ] T6 Education + Contact (copy email) + Footer + page assembly with tests. Also add LinkedIn `https://www.linkedin.com/in/cristian-garcia-developer/` to `contactLinks` (owner-provided 2026-09-27; icon `linkedin`) with an invariant test. Route: delegated.
 - [ ] T7 Full checks: `pnpm lint`, `pnpm test`, `pnpm build`; run dev server on :3000. Route: inline.
 
 ## Acceptance criteria
