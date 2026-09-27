@@ -96,6 +96,13 @@ describe("profile content invariants", () => {
     expect(lastFeatured).toBeLessThan(firstNonFeatured);
   });
 
+  it("leads with the live client projects, as the owner requested", () => {
+    expect(projects.slice(0, 2).map((p) => p.name)).toEqual([
+      "Darnel — sitio corporativo",
+      "Tracker Focus",
+    ]);
+  });
+
   it("uses unique in-page anchors for navigation", () => {
     const hrefs = navLinks.map((link) => link.href);
     expect(new Set(hrefs).size).toBe(hrefs.length);

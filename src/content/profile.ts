@@ -208,22 +208,6 @@ export const languages = [
 
 export const projects: ProjectItem[] = [
   {
-    name: "Asistente RAG para WordPress",
-    description:
-      "Plugin de WordPress con un sistema RAG completo: indexa el contenido del sitio y responde preguntas con IA (OpenAI, Gemini o Claude). Búsqueda híbrida vectorial + fulltext con reranking, streaming en tiempo real vía Server-Sent Events, cifrado AES-256-CBC de claves API, rate limiting por IP, cola de indexación asíncrona y 47 tests unitarios con PHPUnit.",
-    tags: ["PHP", "WordPress", "RAG", "SSE", "OpenAI", "Gemini", "Claude", "PHPUnit"],
-    status: "private",
-    featured: true,
-  },
-  {
-    name: "SgdCimm — SENA",
-    description:
-      "Aplicación PHP + MySQL en producción para automatizar procesos administrativos, activa en tres centros del SENA a nivel nacional. Incluye configuración y mantenimiento del despliegue en servidor Linux.",
-    tags: ["PHP", "MySQL", "Linux"],
-    status: "private",
-    featured: true,
-  },
-  {
     name: "Darnel — sitio corporativo",
     description:
       "Sitio corporativo de Darnel, empresa de empaques sostenibles. Trabajo en el sitio actual y en la migración del CMS desde cero a WinterCMS (Laravel), próxima a salir a producción: módulos de gestión de contenido, procesamiento de formularios y soporte multilenguaje para audiencias internacionales. Mantenimiento continuo con Laravel (WinterCMS) en PHP.",
@@ -241,6 +225,22 @@ export const projects: ProjectItem[] = [
     href: "https://focus-ocx.online",
     featured: true,
     badgeLabel: "Plataforma interna",
+  },
+  {
+    name: "Asistente RAG para WordPress",
+    description:
+      "Plugin de WordPress con un sistema RAG completo: indexa el contenido del sitio y responde preguntas con IA (OpenAI, Gemini o Claude). Búsqueda híbrida vectorial + fulltext con reranking, streaming en tiempo real vía Server-Sent Events, cifrado AES-256-CBC de claves API, rate limiting por IP, cola de indexación asíncrona y 47 tests unitarios con PHPUnit.",
+    tags: ["PHP", "WordPress", "RAG", "SSE", "OpenAI", "Gemini", "Claude", "PHPUnit"],
+    status: "private",
+    featured: true,
+  },
+  {
+    name: "SgdCimm — SENA",
+    description:
+      "Aplicación PHP + MySQL en producción para automatizar procesos administrativos, activa en tres centros del SENA a nivel nacional. Incluye configuración y mantenimiento del despliegue en servidor Linux.",
+    tags: ["PHP", "MySQL", "Linux"],
+    status: "private",
+    featured: true,
   },
   {
     name: "vcsiigo",
