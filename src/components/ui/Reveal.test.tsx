@@ -41,14 +41,13 @@ describe("Reveal", () => {
     expect(html).not.toMatch(/display:\s*none/);
   });
 
-  it("is a plain element with no client-side script hooks (no 'use client' behavior to observe)", () => {
+  it("renders its wrapper as a plain <div>, not some other element", () => {
     const { container } = render(
       <Reveal>
         <p>Contenido</p>
       </Reveal>
     );
 
-    // A plain div wrapper — no framework-specific attributes leak through.
     expect(container.firstElementChild?.tagName).toBe("DIV");
   });
 });

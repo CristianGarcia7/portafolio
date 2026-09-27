@@ -37,6 +37,13 @@ describe("profile content invariants", () => {
     expect(github?.href).toBe("https://github.com/CristianGarcia7");
   });
 
+  it("points LinkedIn at the owner-provided profile", () => {
+    const linkedin = contactLinks.find((link) => link.icon === "linkedin");
+    expect(linkedin?.href).toBe(
+      "https://www.linkedin.com/in/cristian-garcia-developer/"
+    );
+  });
+
   it("never publishes the reference contact's phone number", () => {
     const serialized = JSON.stringify({ contactLinks, projects });
     expect(serialized).not.toMatch(/310\s?764\s?5964/);

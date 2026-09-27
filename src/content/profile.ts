@@ -84,8 +84,11 @@ export const contactLinks: ContactLink[] = [
     href: "https://www.instagram.com/nosoycris_7/",
     icon: "instagram",
   },
-  // LinkedIn: unknown for now. Add { label: "LinkedIn", href: "...", icon: "linkedin" }
-  // above once the owner has a profile — sections only render links that exist.
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/cristian-garcia-developer/",
+    icon: "linkedin",
+  },
 ];
 
 export const heroStats: Stat[] = [
