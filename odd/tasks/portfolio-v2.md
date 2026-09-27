@@ -16,7 +16,7 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 - No invented claims: content only from CV + public repo READMEs.
 - Do not publish the reference person's phone number.
 - Dark theme, responsive from 360px, `prefers-reduced-motion` respected, accessible.
-- Email is unconfirmed (`criatiangarcia637` in CV vs `cristiangarcia637` on old site): keep it in one constant.
+- Email confirmed by owner (2026-09-27): `criatiangarcia637@gmail.com` (CV spelling). Kept in one constant (`contactEmail`).
 
 ## TDD
 - Mode: enabled — source: `~/.claude/CLAUDE.md` (Strict TDD Mode: enabled).
