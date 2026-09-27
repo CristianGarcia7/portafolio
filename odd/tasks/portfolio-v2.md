@@ -28,7 +28,7 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 
 ## Tasks
 - [x] T1 Test harness: Vitest + jsdom + Testing Library, `pnpm test` script, smoke test. Route: inline (mechanical config).
-- [ ] T2 Content model: finish `src/content/profile.ts` (reuse partial writer output) + data invariant tests. Route: inline (1 file + test).
+- [x] T2 Content model: finish `src/content/profile.ts` (reuse partial writer output) + data invariant tests. Route: inline (1 file + test).
 - [ ] T3 Theme + layout + UI primitives (globals.css tokens, layout metadata/fonts, Reveal, SectionHeading, Badge, Card) with tests. Route: delegated (2+ non-trivial files).
 - [ ] T4 Navbar + Hero (typing terminal) + About/stats with tests. Route: delegated.
 - [ ] T5 Experience timeline + Projects + Skills with tests. Route: delegated.
@@ -42,7 +42,9 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 ## Progress / Evidence
 - 2026-09-27: scaffold commit `440395c` on main; branch `feat/portfolio-v2` created. Earlier monolithic writer stopped to switch to ODD; its partial `profile.ts`, `next.config.ts` image config and deps are reused.
 
+- T1 done: RED `pnpm test` exit 1 (no script) → GREEN 1/1 passed; `pnpm lint` exit 0; `tsc --noEmit` clean. Commit `a72f5d6`. RDD assess: medium, review_due=slice_budget_reached (1297 lines, mostly pnpm-lock.yaml). START returned candidate consent (lineage review-b8e50d004b700043) — user granted; reliability lens APPROVED, acknowledged (boundary → `a72f5d6`). Advisory: R3-stale-task-state (fixed here), R3-unexercised-runtime-deps (motion/lucide get exercised in T3/T4). T2 WIP was stashed during review and restored.
+- T2 done: RED 1/9 failed (certifications carried an invented issuer "Sofka / Platzi" not in the CV) → GREEN 9/9; `issuer` made optional; lint 0; tsc clean. Commit: see git log `feat(content)`.
 - Engram mirror `odd/portfolio-v2/tasks`: PENDING — `mem_save` returned `ambiguous_project` (offered: back-kairos, docs; neither matches this repo).
 
 ## Next step
-Resolve chain strategy, then T1.
+RDD assess of T2 commit, then T3 (delegated writer: theme, layout, UI primitives; includes pending `next.config.ts` image config).
