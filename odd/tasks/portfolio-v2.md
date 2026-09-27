@@ -29,7 +29,8 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 ## Tasks
 - [x] T1 Test harness: Vitest + jsdom + Testing Library, `pnpm test` script, smoke test. Route: inline (mechanical config).
 - [x] T2 Content model: finish `src/content/profile.ts` (reuse partial writer output) + data invariant tests. Route: inline (1 file + test).
-- [ ] T3 Theme + layout + UI primitives (globals.css tokens, layout metadata/fonts, Reveal, SectionHeading, Badge, Card) with tests. Route: delegated (2+ non-trivial files).
+- [x] T3 Theme + layout + UI primitives (globals.css tokens, layout metadata/fonts, Reveal, SectionHeading, Badge, Card) with tests. Route: delegated (2+ non-trivial files).
+- [ ] T3a Fix Reveal: single element tree (no hydration mismatch), content visible without JS; test the animated path and CardSpotlight pointer vars + cleanup. Origin: T2+T3 review advisory R3-reveal-render-branch-divergence (WARNING), R3-reveal-animated-path-unproved, R3-spotlight-tracking-untested. Route: delegated with T4 (same writer, separate commit).
 - [ ] T4 Navbar + Hero (typing terminal) + About/stats with tests. Route: delegated.
 - [ ] T5 Experience timeline + Projects + Skills with tests. Route: delegated.
 - [ ] T6 Education + Contact (copy email) + Footer + page assembly with tests. Route: delegated.
@@ -44,7 +45,9 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 
 - T1 done: RED `pnpm test` exit 1 (no script) → GREEN 1/1 passed; `pnpm lint` exit 0; `tsc --noEmit` clean. Commit `a72f5d6`. RDD assess: medium, review_due=slice_budget_reached (1297 lines, mostly pnpm-lock.yaml). START returned candidate consent (lineage review-b8e50d004b700043) — user granted; reliability lens APPROVED, acknowledged (boundary → `a72f5d6`). Advisory: R3-stale-task-state (fixed here), R3-unexercised-runtime-deps (motion/lucide get exercised in T3/T4). T2 WIP was stashed during review and restored.
 - T2 done: RED 1/9 failed (certifications carried an invented issuer "Sofka / Platzi" not in the CV) → GREEN 9/9; `issuer` made optional; lint 0; tsc clean. Commit: see git log `feat(content)`.
+- T2 RDD assess: medium, under_budget (341 lines) → pending in slice.
+- T3 done (delegated writer; trigger: 2+ non-trivial files): RED 4 suites failed (modules missing) → GREEN 6 suites / 24 tests; lint 0; tsc 0; build OK. Commit `ca48380` (+521/-79, over the advisory 400 heuristic: 4 primitives + tests + token rewrite in one unit). Parent re-verified 24/24. RDD assess base `a72f5d6`: medium, slice_budget_reached (941 lines, T2+T3) → START lineage review-e82e8e2bc5478730 returned consent — user granted; reliability lens APPROVED, acknowledged (boundary → `ca48380`). Advisory → T3a; R3-stale-task-state-t3 fixed in this document.
 - Engram mirror `odd/portfolio-v2/tasks`: PENDING — `mem_save` returned `ambiguous_project` (offered: back-kairos, docs; neither matches this repo).
 
 ## Next step
-RDD assess of T2 commit, then T3 (delegated writer: theme, layout, UI primitives; includes pending `next.config.ts` image config).
+T3a + T4 (one delegated writer, two commits).
