@@ -1,102 +1,54 @@
-import { act } from "react";
-import { render, screen } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { hydrateRoot } from "react-dom/client";
-import { describe, expect, it, vi } from "vitest";
-import { useReducedMotion } from "motion/react";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { Reveal } from "./Reveal";
 
-vi.mock("motion/react", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("motion/react")>();
-  return {
-    ...actual,
-    useReducedMotion: vi.fn(),
-  };
-});
-
-const mockedUseReducedMotion = vi.mocked(useReducedMotion);
-
 describe("Reveal", () => {
-  it("renders children immediately visible when reduced motion is preferred", () => {
-    mockedUseReducedMotion.mockReturnValue(true);
-
+  it("renders children with the reveal class", () => {
     render(
       <Reveal>
-        <p>Contenido revelado</p>
+        <p>Contenido</p>
       </Reveal>
     );
 
-    expect(screen.getByText("Contenido revelado")).toBeVisible();
+    const wrapper = screen.getByText("Contenido").parentElement;
+    expect(wrapper).toHaveClass("reveal");
   });
 
-  it("still renders children when motion is enabled", () => {
-    mockedUseReducedMotion.mockReturnValue(false);
-
+  it("forwards an extra className alongside the reveal class", () => {
     render(
-      <Reveal>
-        <p>Contenido animado</p>
+      <Reveal className="extra-class">
+        <p>Contenido</p>
       </Reveal>
     );
 
-    expect(screen.getByText("Contenido animado")).toBeInTheDocument();
+    const wrapper = screen.getByText("Contenido").parentElement;
+    expect(wrapper).toHaveClass("reveal");
+    expect(wrapper).toHaveClass("extra-class");
   });
 
-  it("hydrates onto server-rendered markup without a React hydration mismatch, even when the server and client disagree on reduced motion", async () => {
-    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-    const onRecoverableError = vi.fn();
-
-    // Server render "guesses" motion is enabled (no matchMedia available yet).
-    mockedUseReducedMotion.mockReturnValueOnce(false);
+  it("is fully server-renderable, with content visible and no inline hidden style", () => {
     const html = renderToString(
       <Reveal>
         <p>Contenido SSR</p>
       </Reveal>
     );
 
-    const container = document.createElement("div");
-    container.innerHTML = html;
-    document.body.appendChild(container);
-
-    // Client hydration discovers the real preference: reduced motion is on.
-    mockedUseReducedMotion.mockReturnValueOnce(true);
-    await act(async () => {
-      hydrateRoot(
-        container,
-        <Reveal>
-          <p>Contenido SSR</p>
-        </Reveal>,
-        // React 19 reports an unrecoverable hydration mismatch through this
-        // callback (and/or a console.error that isn't reliably capitalized
-        // "Hydration"), so both signals are checked rather than relying on
-        // a case-sensitive string match alone.
-        { onRecoverableError }
-      );
-    });
-
-    expect(onRecoverableError).not.toHaveBeenCalled();
-
-    const hydrationMismatchLogged = errorSpy.mock.calls.some((call) =>
-      call.some((arg) => typeof arg === "string" && /hydrat/i.test(arg))
-    );
-    expect(hydrationMismatchLogged).toBe(false);
-
-    errorSpy.mockRestore();
-    document.body.removeChild(container);
+    expect(html).toContain("Contenido SSR");
+    // Plain server element: no JS state, so nothing ships hidden for a
+    // no-JS client or before hydration.
+    expect(html).not.toMatch(/opacity:\s*0/);
+    expect(html).not.toMatch(/display:\s*none/);
   });
 
-  it("is visible in the DOM before any JavaScript has run (server-rendered markup)", () => {
-    mockedUseReducedMotion.mockReturnValueOnce(false);
-    const html = renderToString(
+  it("is a plain element with no client-side script hooks (no 'use client' behavior to observe)", () => {
+    const { container } = render(
       <Reveal>
-        <p>Contenido sin JS</p>
+        <p>Contenido</p>
       </Reveal>
     );
 
-    const container = document.createElement("div");
-    container.innerHTML = html;
-
-    const paragraph = container.querySelector("p");
-    const wrapper = paragraph?.parentElement;
-    expect(wrapper).not.toHaveStyle({ opacity: "0" });
+    // A plain div wrapper — no framework-specific attributes leak through.
+    expect(container.firstElementChild?.tagName).toBe("DIV");
   });
 });

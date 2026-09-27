@@ -1,56 +1,39 @@
-"use client";
-
-import type { ReactNode } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import { useMounted } from "@/hooks/useMounted";
+import type { CSSProperties, ReactNode } from "react";
+import { cn } from "@/lib/cn";
 
 type RevealProps = {
   children: ReactNode;
   className?: string;
+  /**
+   * Optional extra delay (in seconds) before the reveal starts. Mapped to
+   * the `--reveal-delay` CSS custom property rather than applied directly:
+   * the reveal itself is a scroll-driven `animation-timeline: view()`
+   * animation (see `.reveal` in `globals.css`), not a time-driven one, so a
+   * plain `animation-delay` would mean "percent of scroll range" rather than
+   * "seconds" and could produce a confusing result. No current caller passes
+   * this — it's kept for API compatibility and reserved for a future
+   * time-based effect (e.g. a CSS transition layered on top of the reveal).
+   */
   delay?: number;
 };
 
 /**
- * Fades and slides children in as they scroll into view. Always renders the
- * same `motion.div` element (no conditional element-type swap), which keeps
- * server-rendered markup and the client's first render identical and avoids
- * a React hydration mismatch.
- *
- * The hidden `initial` state is only armed after the component has mounted
- * on the client (`useMounted`, see `src/hooks/useMounted.ts`). That means:
- * - Server-rendered / no-JS markup always renders with `initial={false}`,
- *   so content is visible immediately and never ships hidden.
- * - The very first client render matches that same `initial={false}` state,
- *   so hydration has nothing to reconcile.
- *
- * Motion only reads the `initial` prop once, at the element's own mount —
- * it does NOT re-arm the animation just because a later render passes a
- * different `initial` value to the same element instance. So once mounted
- * (and only if the user doesn't prefer reduced motion), the element is
- * *remounted* via a `key` change: this creates a fresh Motion instance that
- * reads the real `initial={ opacity: 0, y: 24 }` + `whileInView` pair,
- * which is what actually arms the scroll-reveal for real users. Without
- * this remount, the animation would be silently dead in production even
- * though the props "looked" correct.
- * When the user prefers reduced motion, `animationEnabled` never turns
- * true, so the key never changes and the element never remounts.
+ * Plain server element — no "use client", no hooks, no JS animation
+ * library. Content is always present and visible in the HTML; the reveal
+ * effect itself is entirely CSS (`.reveal` in `globals.css`), gated behind
+ * `@media (prefers-reduced-motion: no-preference)` and
+ * `@supports (animation-timeline: view())`. Browsers that don't support
+ * scroll-driven animations, or users who prefer reduced motion, simply see
+ * the content statically — there is no JS fallback path to keep in sync.
  */
-export function Reveal({ children, className, delay = 0 }: RevealProps) {
-  const shouldReduceMotion = useReducedMotion();
-  const mounted = useMounted();
-
-  const animationEnabled = mounted && !shouldReduceMotion;
+export function Reveal({ children, className, delay }: RevealProps) {
+  const style: CSSProperties | undefined = delay
+    ? ({ "--reveal-delay": `${delay}s` } as CSSProperties)
+    : undefined;
 
   return (
-    <motion.div
-      key={String(animationEnabled)}
-      className={className}
-      initial={animationEnabled ? { opacity: 0, y: 24 } : false}
-      whileInView={animationEnabled ? { opacity: 1, y: 0 } : undefined}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.5, delay, ease: "easeOut" }}
-    >
+    <div className={cn("reveal", className)} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }

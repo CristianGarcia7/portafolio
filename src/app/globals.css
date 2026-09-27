@@ -96,3 +96,63 @@ body {
     animation: none;
   }
 }
+
+/* Scroll-driven reveal for `Reveal` (see src/components/ui/Reveal.tsx).
+   Content is always visible outside this block: unsupported browsers and
+   users who prefer reduced motion get the plain, static element. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered line-by-line reveal + blinking cursor for `TerminalCard` (see
+   src/components/sections/TerminalCard.tsx). All lines are always in the
+   HTML; outside this block (reduced motion) they're simply visible at
+   once, with no cursor animation. */
+@media (prefers-reduced-motion: no-preference) {
+  .terminal-line {
+    opacity: 0;
+    animation: terminal-line-in 0.4s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.35s);
+  }
+
+  .terminal-cursor {
+    animation: terminal-cursor-blink 1s steps(1, end) infinite;
+  }
+}
+
+@keyframes terminal-line-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes terminal-cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
