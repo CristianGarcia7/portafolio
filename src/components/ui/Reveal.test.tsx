@@ -43,6 +43,7 @@ describe("Reveal", () => {
 
   it("hydrates onto server-rendered markup without a React hydration mismatch, even when the server and client disagree on reduced motion", async () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    const onRecoverableError = vi.fn();
 
     // Server render "guesses" motion is enabled (no matchMedia available yet).
     mockedUseReducedMotion.mockReturnValueOnce(false);
@@ -63,14 +64,19 @@ describe("Reveal", () => {
         container,
         <Reveal>
           <p>Contenido SSR</p>
-        </Reveal>
+        </Reveal>,
+        // React 19 reports an unrecoverable hydration mismatch through this
+        // callback (and/or a console.error that isn't reliably capitalized
+        // "Hydration"), so both signals are checked rather than relying on
+        // a case-sensitive string match alone.
+        { onRecoverableError }
       );
     });
 
+    expect(onRecoverableError).not.toHaveBeenCalled();
+
     const hydrationMismatchLogged = errorSpy.mock.calls.some((call) =>
-      call.some(
-        (arg) => typeof arg === "string" && arg.includes("Hydration")
-      )
+      call.some((arg) => typeof arg === "string" && /hydrat/i.test(arg))
     );
     expect(hydrationMismatchLogged).toBe(false);
 

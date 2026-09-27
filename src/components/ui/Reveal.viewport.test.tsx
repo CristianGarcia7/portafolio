@@ -1,6 +1,6 @@
 import { act } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { useReducedMotion } from "motion/react";
 import { Reveal } from "./Reveal";
 
@@ -24,6 +24,13 @@ vi.mock("motion/react", async (importOriginal) => {
 const mockedUseReducedMotion = vi.mocked(useReducedMotion);
 
 describe("Reveal animated path", () => {
+  // Restore the real (vitest.setup.ts-stubbed) IntersectionObserver even if
+  // an assertion above throws, so a failure here can't leak the locally
+  // stubbed class into later test files.
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it("reveals children once the IntersectionObserver reports they entered the viewport", async () => {
     mockedUseReducedMotion.mockReturnValue(false);
 

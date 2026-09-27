@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
+import { useMounted } from "@/hooks/useMounted";
 
 type TerminalCardProps = {
   lines: string[];
@@ -12,28 +13,39 @@ const LINE_INTERVAL_MS = 550;
 /**
  * Decorative "terminal" card that types out `lines` one at a time to
  * illustrate a real request/response against the RAG agent described in
- * the CV. When the user prefers reduced motion, the full log is shown at
- * once instead of being typed out.
+ * the CV.
+ *
+ * Server-rendered markup, no-JS clients, and the very first client render
+ * (before `useMounted` flips, see `src/hooks/useMounted.ts`) all show the
+ * full log at once — this keeps SSR and the first hydrated render
+ * byte-for-byte identical (no hydration mismatch), and no-JS users never
+ * see an empty terminal. Only once mounted, and only if the user doesn't
+ * prefer reduced motion, does typing actually start (from an empty log).
  */
 export function TerminalCard({ lines }: TerminalCardProps) {
   const shouldReduceMotion = useReducedMotion();
+  const mounted = useMounted();
   const [typedCount, setTypedCount] = useState(0);
 
+  const isTypingAllowed = mounted && !shouldReduceMotion;
+
   useEffect(() => {
-    // Reduced motion: skip the interval subscription entirely. The render
-    // below falls back to showing every line directly (no setState call
-    // needed here for that case).
-    if (shouldReduceMotion) return;
+    // Typing always starts from an empty log: `typedCount` is still its
+    // initial `0` the first time `isTypingAllowed` turns true (nothing else
+    // in this component sets it before then), so there is no need to (and,
+    // per the lint rule against synchronous setState-in-effect, no need to)
+    // reset it here.
+    if (!isTypingAllowed) return;
 
     const id = setInterval(() => {
       setTypedCount((count) => (count < lines.length ? count + 1 : count));
     }, LINE_INTERVAL_MS);
 
     return () => clearInterval(id);
-  }, [shouldReduceMotion, lines.length]);
+  }, [isTypingAllowed, lines.length]);
 
-  const visibleCount = shouldReduceMotion ? lines.length : typedCount;
-  const isTyping = visibleCount < lines.length;
+  const visibleCount = isTypingAllowed ? typedCount : lines.length;
+  const isTyping = isTypingAllowed && visibleCount < lines.length;
 
   return (
     <div
