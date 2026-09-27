@@ -30,8 +30,9 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 - [x] T1 Test harness: Vitest + jsdom + Testing Library, `pnpm test` script, smoke test. Route: inline (mechanical config).
 - [x] T2 Content model: finish `src/content/profile.ts` (reuse partial writer output) + data invariant tests. Route: inline (1 file + test).
 - [x] T3 Theme + layout + UI primitives (globals.css tokens, layout metadata/fonts, Reveal, SectionHeading, Badge, Card) with tests. Route: delegated (2+ non-trivial files).
-- [ ] T3a Fix Reveal: single element tree (no hydration mismatch), content visible without JS; test the animated path and CardSpotlight pointer vars + cleanup. Origin: T2+T3 review advisory R3-reveal-render-branch-divergence (WARNING), R3-reveal-animated-path-unproved, R3-spotlight-tracking-untested. Route: delegated with T4 (same writer, separate commit).
-- [ ] T4 Navbar + Hero (typing terminal) + About/stats with tests. Route: delegated.
+- [x] T3a Fix Reveal: single element tree (no hydration mismatch), content visible without JS; test the animated path and CardSpotlight pointer vars + cleanup. Origin: T2+T3 review advisory R3-reveal-render-branch-divergence (WARNING), R3-reveal-animated-path-unproved, R3-spotlight-tracking-untested. Route: delegated with T4 (same writer, separate commit).
+- [x] T4 Navbar + Hero (typing terminal) + About/stats with tests. Route: delegated.
+- [ ] T4a Fix hydration-path bugs from T3a+T4 review: (1) Reveal animation never plays after SSR hydration (initial read only at mount) — WARNING R3-reveal-animation-dead-after-hydration; (2) hydration guard test is case-sensitive and misses React 19 mismatch reporting — WARNING R3-hydration-guard-case-sensitive (use hydrateRoot + onRecoverableError); (3) TerminalCard SSR/client divergence + no-JS empty terminal + untested typing path — WARNING R3-terminal-ssr-divergence-and-typing-untested; plus SUGGESTIONs: IO stub cleanup in afterEach, spotlight cleanup asserts same handler. Tests must exercise the real SSR→hydrate path (renderToString + hydrateRoot). Route: delegated with T5 (separate commit).
 - [ ] T5 Experience timeline + Projects + Skills with tests. Route: delegated.
 - [ ] T6 Education + Contact (copy email) + Footer + page assembly with tests. Route: delegated.
 - [ ] T7 Full checks: `pnpm lint`, `pnpm test`, `pnpm build`; run dev server on :3000. Route: inline.
@@ -47,7 +48,9 @@ The old site presents a "Full Stack in training" profile with toy projects (dice
 - T2 done: RED 1/9 failed (certifications carried an invented issuer "Sofka / Platzi" not in the CV) → GREEN 9/9; `issuer` made optional; lint 0; tsc clean. Commit: see git log `feat(content)`.
 - T2 RDD assess: medium, under_budget (341 lines) → pending in slice.
 - T3 done (delegated writer; trigger: 2+ non-trivial files): RED 4 suites failed (modules missing) → GREEN 6 suites / 24 tests; lint 0; tsc 0; build OK. Commit `ca48380` (+521/-79, over the advisory 400 heuristic: 4 primitives + tests + token rewrite in one unit). Parent re-verified 24/24. RDD assess base `a72f5d6`: medium, slice_budget_reached (941 lines, T2+T3) → START lineage review-e82e8e2bc5478730 returned consent — user granted; reliability lens APPROVED, acknowledged (boundary → `ca48380`). Advisory → T3a; R3-stale-task-state-t3 fixed in this document.
+- T3a done (delegated): RED 2 Reveal assertions failed on old code (opacity:0 shipped without JS) → GREEN; mounted flag via useSyncExternalStore; animated-path test isolated (framer-motion caches IntersectionObserver per module); CardSpotlight test passed first run (behavior already correct, coverage-only). Commit `134f158`.
+- T4 done (delegated): Navbar RED→4/4, Hero RED→5/5, About RED→1/1; suite 11 files / 39 tests; lint/tsc clean; build OK. Commit `daf0e10` (516 lines, over advisory heuristic: 5 interlocking pieces). Added `terminalLog` export in profile.ts built from existing facts. lucide has no brand icons → GitHub CTA uses ExternalLink + text. Parent re-verified 39/39. RDD assess base `ca48380`: medium, slice_budget_reached (779) → START lineage review-1a7c0f05ed46c446 user granted; reliability APPROVED with 3 WARNING + 2 SUGGESTION advisories → T4a; acknowledged (boundary → `daf0e10`).
 - Engram mirror `odd/portfolio-v2/tasks`: PENDING — `mem_save` returned `ambiguous_project` (offered: back-kairos, docs; neither matches this repo).
 
 ## Next step
-T3a + T4 (one delegated writer, two commits).
+T4a + T5 (one delegated writer, separate commits).
