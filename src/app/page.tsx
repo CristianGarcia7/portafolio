@@ -1,14 +1,19 @@
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { profile } from "@/content/profile";
+import { Navbar } from "@/components/layout/Navbar";
+import { About } from "@/components/sections/About";
+import { Hero } from "@/components/sections/Hero";
 
+// Navbar is rendered here (not in layout.tsx) because this is a single-page
+// site: layout.tsx stays focused on the document shell, fonts, and
+// metadata, while page.tsx composes the visible sections in scroll order.
 export default function Home() {
   return (
-    <main className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-6 px-6 py-24">
-      <SectionHeading
-        eyebrow="// 00 · en construccion"
-        title={profile.shortName}
-        subtitle="Las secciones completas del portafolio llegan en las siguientes tareas."
-      />
-    </main>
+    <>
+      <Navbar />
+      <main className="flex flex-1 flex-col">
+        <Hero />
+        <About />
+        {/* Experience, Projects, Skills, Education, Contact, Footer land in T5/T6. */}
+      </main>
+    </>
   );
 }

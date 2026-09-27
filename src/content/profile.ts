@@ -256,6 +256,23 @@ export const projects: ProjectItem[] = [
   },
 ];
 
+/**
+ * Lines shown in the Hero "terminal" card, simulating a real request to the
+ * RAG agent described in `experience` and `projects` below. Every technical
+ * detail here (hybrid search, reranking, SSE streaming, the providers, the
+ * 47 unit tests) is already stated elsewhere in this file — nothing new is
+ * claimed here, this is just a presentational reframing of those facts.
+ */
+export const terminalLog: string[] = [
+  "$ curl -N https://api/agentes/consulta -d '{\"pregunta\":\"...\"}'",
+  "> conectando con el pipeline RAG...",
+  "> busqueda hibrida: vectorial + fulltext",
+  "> reranking de resultados antes de responder",
+  "> streaming de la respuesta via Server-Sent Events",
+  "> proveedor de IA: OpenAI | Gemini | Claude",
+  "> 47 tests unitarios con PHPUnit ✓",
+];
+
 export const navLinks = [
   { label: "Inicio", href: "#inicio" },
   { label: "Sobre mí", href: "#sobre-mi" },
