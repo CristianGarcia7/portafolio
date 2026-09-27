@@ -17,6 +17,13 @@ describe("profile content invariants", () => {
     ]);
   });
 
+  it("keeps exactly two certifications without an issuer", () => {
+    // Two certifications in the CV genuinely have no issuer — confirm the
+    // fixture still reflects that (guards against silently inventing one).
+    const withoutIssuer = certifications.filter((c) => !c.issuer);
+    expect(withoutIssuer).toHaveLength(2);
+  });
+
   it("only shows the approved hero stats", () => {
     expect(heroStats.map((s) => `${s.value} ${s.label}`)).toEqual([
       "3 centros SENA en producción",

@@ -26,11 +26,6 @@ describe("Education", () => {
         expect(within(card).getByText(cert.issuer)).toBeInTheDocument();
       }
     }
-
-    // Two certifications in the CV genuinely have no issuer — confirm the
-    // fixture still reflects that (guards against silently inventing one).
-    const withoutIssuer = certifications.filter((c) => !c.issuer);
-    expect(withoutIssuer).toHaveLength(2);
   });
 
   it("never invents an issuer for a certification that doesn't have one", () => {

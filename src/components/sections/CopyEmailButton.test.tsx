@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { contactEmail } from "@/content/profile";
 import { CopyEmailButton } from "./CopyEmailButton";
@@ -17,6 +23,7 @@ describe("CopyEmailButton", () => {
   afterEach(() => {
     stubClipboard(undefined);
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   it("copies the exact contact email and announces success via aria-live", async () => {
@@ -40,7 +47,7 @@ describe("CopyEmailButton", () => {
     expect(region).toHaveAttribute("aria-live", "polite");
   });
 
-  it("falls back to showing the email as text when the clipboard write rejects", async () => {
+  it("keeps the live region mounted, announces the failure, and focuses a mailto link when the clipboard write rejects", async () => {
     const writeText = vi.fn().mockRejectedValue(new Error("denied"));
     stubClipboard({ writeText });
 
@@ -52,12 +59,17 @@ describe("CopyEmailButton", () => {
     await waitFor(() =>
       expect(screen.queryByRole("button")).not.toBeInTheDocument()
     );
-    expect(
-      screen.getByText(contactEmail, { selector: "p" })
-    ).toBeInTheDocument();
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      `No se pudo copiar. Escribe a: ${contactEmail}`
+    );
+
+    const link = screen.getByRole("link", { name: contactEmail });
+    expect(link).toHaveAttribute("href", `mailto:${contactEmail}`);
+    expect(document.activeElement).toBe(link);
   });
 
-  it("falls back to showing the email when the Clipboard API is missing", async () => {
+  it("keeps the live region mounted, announces the failure, and focuses a mailto link when the Clipboard API is missing", async () => {
     stubClipboard(undefined);
 
     render(<CopyEmailButton />);
@@ -68,8 +80,60 @@ describe("CopyEmailButton", () => {
     await waitFor(() =>
       expect(screen.queryByRole("button")).not.toBeInTheDocument()
     );
-    expect(
-      screen.getByText(contactEmail, { selector: "p" })
-    ).toBeInTheDocument();
+
+    expect(screen.getByRole("status")).toHaveTextContent(
+      `No se pudo copiar. Escribe a: ${contactEmail}`
+    );
+
+    const link = screen.getByRole("link", { name: contactEmail });
+    expect(link).toHaveAttribute("href", `mailto:${contactEmail}`);
+    expect(document.activeElement).toBe(link);
+  });
+
+  it('resets the "Copiado" status about 2s after copying, and clears the reset timer on unmount', async () => {
+    vi.useFakeTimers();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    stubClipboard({ writeText });
+    const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const { unmount } = render(<CopyEmailButton />);
+    fireEvent.click(
+      screen.getByRole("button", { name: new RegExp(contactEmail) })
+    );
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(screen.getByRole("status")).toHaveTextContent("Copiado");
+
+    unmount();
+    await act(() => vi.advanceTimersByTimeAsync(2000));
+    expect(errorSpy).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it("re-announces the copied status on a second click by clearing it first", async () => {
+    vi.useFakeTimers();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    stubClipboard({ writeText });
+
+    render(<CopyEmailButton />);
+    const button = screen.getByRole("button", {
+      name: new RegExp(contactEmail),
+    });
+    const status = screen.getByRole("status");
+
+    fireEvent.click(button);
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(status).toHaveTextContent("Copiado");
+
+    fireEvent.click(button);
+    expect(status).toBeEmptyDOMElement();
+
+    await act(() => vi.advanceTimersByTimeAsync(0));
+    expect(status).toHaveTextContent("Copiado");
+
+    await act(() => vi.advanceTimersByTimeAsync(2000));
+    expect(status).toBeEmptyDOMElement();
+
+    vi.useRealTimers();
   });
 });

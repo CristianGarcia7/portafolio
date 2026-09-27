@@ -1,10 +1,12 @@
 import { profile } from "@/content/profile";
 
 /**
- * Site footer: copyright with the year computed at render time, the
- * owner's name, and a short attribution line. Rendered as a sibling of
- * `<main>` (not nested inside it), so the `<footer>` element keeps its
- * implicit `contentinfo` landmark role.
+ * Site footer: copyright with the owner's name and a short attribution
+ * line. This page is statically prerendered, so `new Date().getFullYear()`
+ * below runs at build time, not on each visit — the year reflects the last
+ * build, not "today". Rendered as a sibling of `<main>` (not nested inside
+ * it), so the `<footer>` element keeps its implicit `contentinfo` landmark
+ * role.
  */
 export function Footer() {
   const year = new Date().getFullYear();
