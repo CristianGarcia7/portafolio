@@ -1,28 +1,36 @@
-# Portafolio · Cristian Garcia
+# Portafolio · Cristian García
 
-Mi portafolio personal como desarrollador Full Stack. Es una SPA con animaciones que reúne mi perfil, experiencia, formación, habilidades y proyectos.
+Mi portafolio personal como Backend Developer. Reúne mi perfil, experiencia, proyectos (incluidos trabajos para clientes en producción), habilidades, formación y contacto.
 
 ## 🧩 Secciones
 
-Hero · Sobre mí · Habilidades · Experiencia · Educación · Proyectos · Contacto
+Inicio · Sobre mí · Experiencia · Proyectos · Habilidades · Educación · Contacto
 
 ## 🧱 Stack
 
-React 19 · TypeScript · Vite 7 · Tailwind CSS 4 · Framer Motion
+Next.js 16 (App Router, Server Components) · React 19 · TypeScript · Tailwind CSS 4 · Vitest + Testing Library
+
+- Todo el contenido vive en `src/content/profile.ts`; los componentes solo lo presentan.
+- Las animaciones son CSS puro (scroll-driven animations con `@supports` y `prefers-reduced-motion`), sin JavaScript en el cliente, así que el sitio se ve completo aunque JS no cargue.
+- La página se genera como estática en el build.
 
 ## 🚀 Desarrollo local
 
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm dev       # http://localhost:3000
 ```
 
-## 🐳 Despliegue con Docker
-
-El `Dockerfile` hace el build con Node 20 y sirve el resultado estático con **nginx**.
+## ✅ Calidad
 
 ```bash
-docker compose up -d --build   # expone el sitio en el puerto 3000
+pnpm test      # tests unitarios (Vitest + Testing Library)
+pnpm lint
+pnpm build
 ```
 
-El `docker-compose.yml` se conecta a una red externa `nginx-proxy` para ponerlo detrás de un proxy inverso. Si no la usas, crea la red (`docker network create nginx-proxy`) o quita esa sección del archivo.
+Los tests también protegen el contenido: por ejemplo, que los enlaces públicos apunten a los repos reales, que no se publiquen datos de terceros y que los proyectos destacados vayan primero.
+
+## 📁 Seguimiento del trabajo
+
+`odd/tasks/portfolio-v2.md` registra las tareas, la evidencia de tests y las revisiones de cada paso de esta versión.

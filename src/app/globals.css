@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+:root {
+  --background: #07080b;
+  --foreground: #e7ebf2;
+  --accent-emerald: #34d399;
+  --accent-cyan: #22d3ee;
+  --accent-violet: #a78bfa;
+  --border: rgba(255, 255, 255, 0.1);
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-strong: rgba(255, 255, 255, 0.06);
+  --gradient-accent: linear-gradient(
+    135deg,
+    var(--accent-emerald) 0%,
+    var(--accent-cyan) 65%,
+    var(--accent-violet) 100%
+  );
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent-emerald);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-violet: var(--accent-violet);
+  --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* Gradient accent text: emerald -> cyan with a hint of violet. */
+.text-gradient-accent {
+  background: var(--gradient-accent);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Subtle animated background grid + glow. Meant to sit behind page content
+   as a fixed, decorative layer (see app/layout.tsx). */
+.bg-grid-glow {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(
+      circle at 20% 20%,
+      color-mix(in oklab, var(--accent-emerald) 18%, transparent),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 80% 0%,
+      color-mix(in oklab, var(--accent-cyan) 14%, transparent),
+      transparent 40%
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size:
+    auto,
+    auto,
+    48px 48px,
+    48px 48px;
+  animation: grid-glow-pulse 8s ease-in-out infinite;
+}
+
+@keyframes grid-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .bg-grid-glow {
+    animation: none;
+  }
+}
+
+/* Scroll-driven reveal for `Reveal` (see src/components/ui/Reveal.tsx).
+   Content is always visible outside this block: unsupported browsers and
+   users who prefer reduced motion get the plain, static element. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered line-by-line reveal + blinking cursor for `TerminalCard` (see
+   src/components/sections/TerminalCard.tsx). All lines are always in the
+   HTML; outside this block (reduced motion) they're simply visible at
+   once, with no cursor animation. */
+@media (prefers-reduced-motion: no-preference) {
+  .terminal-line {
+    opacity: 0;
+    animation: terminal-line-in 0.4s ease-out forwards;
+    animation-delay: calc(var(--i) * 0.35s);
+  }
+
+  .terminal-cursor {
+    animation: terminal-cursor-blink 1s steps(1, end) infinite;
+  }
+}
+
+@keyframes terminal-line-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes terminal-cursor-blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
